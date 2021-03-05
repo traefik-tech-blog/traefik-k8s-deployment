@@ -18,15 +18,15 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: dashboard
+  name: whoami
 spec:
   entryPoints:
     - web
   routes:
-    - match: (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
-      kind: Rule
-      services:
-        - name: api@internal
-          kind: TraefikService
-      middlewares:
-        - name: auth
+  - kind: Rule
+    match: Host(`whoami.local`)
+    services:
+    - name: whoami
+      port: 80
+    middlewares:
+      - name: auth

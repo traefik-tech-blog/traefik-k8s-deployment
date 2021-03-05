@@ -1,13 +1,33 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secret-auth
+data:
+  users: |
+    dXNlcjE6JGFwcjEkMkZpci40NVIkTDdxcGJQTDVuc2RRTEZWaUpWZnZn
+    MQp1c2VyOiRhcHIxJDVneWFRcXBNJEZKaUVRYnNKckEuMUUzaDZqdXBjMjA=
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: auth
+spec:
+  basicAuth:
+    secret: secret-auth
+---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: dashboard
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
-    - match: PathPrefix(`/api`) ||  PathPrefix(`/dashboard`)
+    - match: (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
       kind: Rule
       services:
         - name: api@internal
           kind: TraefikService
+      middlewares:
+        - name: auth
+  tls: {}
